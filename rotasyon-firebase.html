@@ -1,0 +1,1300 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rotasyon Tercih Sistemi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream: #FBF8F3;
+  --paper: #F4EFE6;
+  --ink: #1A1612;
+  --ink-soft: #5C534A;
+  --ink-muted: #8B8278;
+  --teal: #1F4F4A;
+  --teal-dark: #163936;
+  --coral: #C7484B;
+  --coral-light: #F0DADB;
+  --amber: #C7763B;
+  --green: #4A6B3F;
+  --indigo: #3F4C6B;
+  --line: #D9D2C5;
+  --line-light: #ECE6D8;
+  --shadow: 0 1px 3px rgba(26, 22, 18, 0.04), 0 4px 16px rgba(26, 22, 18, 0.04);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: var(--cream); color: var(--ink); }
+body {
+  font-family: 'IBM Plex Sans', -apple-system, sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  min-height: 100vh;
+  padding: 24px 16px;
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3 {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+h1 { font-size: 30px; line-height: 1.1; font-variation-settings: "opsz" 72; }
+h2 { font-size: 21px; line-height: 1.2; margin-bottom: 14px; }
+h3 { font-size: 16px; line-height: 1.3; font-weight: 600; font-family: 'IBM Plex Sans', sans-serif; letter-spacing: 0; }
+p { color: var(--ink-soft); }
+code { font-family: 'IBM Plex Mono', monospace; font-size: 0.9em; background: var(--paper); padding: 1px 5px; border-radius: 3px; }
+.container {
+  max-width: 920px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--line-light);
+  padding: 32px 28px;
+}
+.header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding-bottom: 20px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--line-light);
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.header-bar .subtitle {
+  font-size: 13px;
+  color: var(--ink-muted);
+  margin-top: 4px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.user-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: var(--paper);
+  border-radius: 999px;
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.user-chip .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+
+/* Forms */
+.form-group { margin-bottom: 16px; }
+label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-soft);
+  margin-bottom: 6px;
+  letter-spacing: 0.01em;
+}
+input[type="text"], input[type="password"], input[type="date"], input[type="number"], select {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-size: 15px;
+  font-family: inherit;
+  background: white;
+  color: var(--ink);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+input:focus, select:focus {
+  outline: none;
+  border-color: var(--indigo);
+  box-shadow: 0 0 0 3px rgba(63, 76, 107, 0.1);
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: var(--indigo);
+  color: white;
+  border: none;
+  padding: 11px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: inherit;
+  transition: background 0.15s, transform 0.05s;
+}
+.btn:hover { background: #2D3954; }
+.btn:active { transform: translateY(1px); }
+.btn-secondary { background: white; color: var(--ink); border: 1px solid var(--line); }
+.btn-secondary:hover { background: var(--paper); }
+.btn-danger { background: var(--coral); }
+.btn-danger:hover { background: #a73a3d; }
+.btn-ghost { background: transparent; color: var(--ink-soft); padding: 8px 12px; }
+.btn-ghost:hover { background: var(--paper); }
+.btn-sm { padding: 7px 12px; font-size: 13px; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Alerts */
+.alert {
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  border-left: 3px solid;
+}
+.alert-info { background: var(--paper); border-color: var(--indigo); color: var(--ink-soft); }
+.alert-warning { background: #FBF1E3; border-color: var(--amber); color: #6B4517; }
+.alert-success { background: #EDF1E8; border-color: var(--green); color: #2F4226; }
+.alert-danger { background: var(--coral-light); border-color: var(--coral); color: #6B2024; }
+
+/* 3-month calendar */
+.months-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin: 14px 0;
+}
+.month-block {
+  background: var(--paper);
+  padding: 14px 12px;
+  border-radius: 12px;
+}
+.month-title {
+  text-align: center;
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 10px;
+  color: var(--ink);
+  font-variant-caps: small-caps;
+  letter-spacing: 0.04em;
+}
+.month-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+}
+.day-header {
+  text-align: center;
+  font-size: 10px;
+  color: var(--ink-muted);
+  padding: 3px 0;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.day-cell {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  border: 1px solid var(--line-light);
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--ink);
+  user-select: none;
+  transition: all 0.12s;
+  font-variant-numeric: tabular-nums;
+}
+.day-cell:hover { border-color: var(--indigo); transform: translateY(-1px); }
+.day-cell.selected {
+  background: var(--indigo);
+  color: white;
+  border-color: var(--indigo);
+  box-shadow: 0 2px 5px rgba(63, 76, 107, 0.25);
+}
+.day-cell.empty {
+  background: transparent;
+  border: none;
+  cursor: default;
+}
+.day-cell.empty:hover { transform: none; }
+.day-cell.weekend { color: var(--coral); }
+.day-cell.selected.weekend { color: white; }
+.day-cell.locked { cursor: not-allowed; opacity: 0.75; }
+.day-cell.locked:hover { transform: none; border-color: var(--line-light); }
+.day-cell.locked.selected:hover { border-color: var(--indigo); }
+
+.calendar-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+@media (max-width: 768px) {
+  .months-container { grid-template-columns: 1fr; }
+}
+
+/* Range input */
+.range-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  margin-top: 14px;
+  padding: 14px;
+  background: var(--paper);
+  border-radius: 10px;
+}
+.range-row .range-inputs { display: flex; gap: 8px; align-items: flex-end; flex: 1; min-width: 200px; flex-wrap: wrap; }
+.range-row label { margin-bottom: 4px; font-size: 12px; }
+.range-row input { padding: 8px 10px; font-size: 14px; }
+
+/* Tabs */
+.tab-bar {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--line-light);
+  margin-bottom: 24px;
+  overflow-x: auto;
+}
+.tab {
+  padding: 10px 16px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  color: var(--ink-soft);
+  font-weight: 500;
+  font-size: 14px;
+  white-space: nowrap;
+  background: none;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  font-family: inherit;
+}
+.tab.active { border-bottom-color: var(--indigo); color: var(--ink); }
+.tab:hover { color: var(--ink); }
+
+/* Resident table */
+.resident-list {
+  background: white;
+  border: 1px solid var(--line-light);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.resident-row {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  gap: 14px;
+  border-bottom: 1px solid var(--line-light);
+}
+.resident-row:last-child { border-bottom: none; }
+.resident-row .name { font-weight: 600; min-width: 70px; font-variant-caps: small-caps; letter-spacing: 0.05em; }
+.resident-row .meta { color: var(--ink-muted); font-size: 13px; flex: 1; }
+.resident-row .actions { display: flex; gap: 6px; }
+.checkbox-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.checkbox-wrap input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: var(--green); }
+
+/* Slot list (admin editable) */
+.slot-list-header {
+  display: grid;
+  grid-template-columns: 28px 1fr 110px 90px 36px;
+  gap: 10px;
+  padding: 8px 14px;
+  font-size: 12px;
+  color: var(--ink-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+.slot-list {
+  background: white;
+  border: 1px solid var(--line-light);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.slot-row {
+  display: grid;
+  grid-template-columns: 28px 1fr 110px 90px 36px;
+  gap: 10px;
+  align-items: center;
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--line-light);
+}
+.slot-row:last-child { border-bottom: none; }
+.slot-row:hover { background: #FCFAF5; }
+.slot-num {
+  font-size: 12px;
+  color: var(--ink-muted);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.slot-name, .slot-pass {
+  padding: 7px 10px;
+  font-size: 14px;
+  border: 1px solid transparent;
+  background: transparent;
+  border-radius: 6px;
+  font-family: inherit;
+  color: var(--ink);
+}
+.slot-name:hover, .slot-pass:hover { border-color: var(--line); background: white; }
+.slot-name:focus, .slot-pass:focus {
+  outline: none;
+  border-color: var(--indigo);
+  background: white;
+  box-shadow: 0 0 0 2px rgba(63, 76, 107, 0.1);
+}
+.slot-name { font-weight: 600; }
+.slot-pass { font-family: monospace; }
+.slot-meta { font-size: 12px; color: var(--ink-muted); }
+.clear-slot-btn {
+  padding: 4px 8px !important;
+  font-size: 14px !important;
+  color: var(--ink-muted);
+}
+.clear-slot-btn:hover { color: var(--coral); background: var(--coral-light); }
+
+/* Summary */
+.summary-box {
+  background: var(--paper);
+  border: 1px solid var(--line-light);
+  border-radius: 10px;
+  padding: 20px;
+  font-size: 13.5px;
+  line-height: 1.7;
+  margin-top: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.summary-resident { margin-bottom: 16px; padding-bottom: 14px; border-bottom: 1px dashed var(--line); }
+.summary-resident:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.summary-resident .res-name {
+  font-weight: 700;
+  color: var(--ink);
+  font-variant-caps: small-caps;
+  letter-spacing: 0.06em;
+  font-size: 15px;
+  margin-bottom: 4px;
+}
+.summary-resident .res-line {
+  margin-left: 14px;
+  color: var(--ink-soft);
+  font-size: 13px;
+}
+.summary-resident .res-label {
+  font-weight: 600;
+  color: var(--ink-muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: inline-block;
+  width: 70px;
+}
+.summary-resident .empty-tok { color: var(--ink-muted); font-style: italic; }
+
+/* Utility */
+.muted { color: var(--ink-muted); font-size: 13px; }
+.row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.row-between { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.mt-3 { margin-top: 20px; }
+.mt-4 { margin-top: 28px; }
+.mb-2 { margin-bottom: 12px; }
+.divider { height: 1px; background: var(--line-light); margin: 24px 0; }
+.cred-hint {
+  background: var(--paper);
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 12px;
+  color: var(--ink-muted);
+  margin-top: 16px;
+  font-family: monospace;
+}
+.cred-hint b { color: var(--ink-soft); }
+
+/* Spinner */
+.spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--line);
+  border-top-color: var(--indigo);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.sync-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: #EDF1E8;
+  border-radius: 999px;
+  font-size: 11px;
+  color: #4A6B3F;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+.sync-chip::before {
+  content: '';
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+@media (max-width: 520px) {
+  body { padding: 12px 8px; }
+  .container { padding: 22px 18px; }
+  h1 { font-size: 24px; }
+  .day-cell { font-size: 12px; }
+  .slot-list-header { display: none; }
+  .slot-row { grid-template-columns: 24px 1fr 90px 30px; }
+  .slot-row .slot-meta { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="container" id="app"></div>
+
+<script type="module">
+/* ============================================================
+   FIREBASE IMPORTS — CDN'den modüler v12 SDK
+   ============================================================ */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
+import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+
+/* ============================================================
+   👇 BURAYI FIREBASE CONSOLE'DAN ALDIĞINIZ CONFIG İLE DEĞİŞTİRİN
+   (Önceki uygulama için kullandığınız aynı config buraya da yapıştırılabilir)
+   ============================================================ */
+const firebaseConfig = {
+  apiKey: "AIzaSyCuYAfTWEWqjDC-CuTF40OKBRsLFgpzr2s",
+  authDomain: "rotasyon-listesi.firebaseapp.com",
+  projectId: "rotasyon-listesi",
+  storageBucket: "rotasyon-listesi.firebasestorage.app",
+  messagingSenderId: "481338653950",
+  appId: "1:481338653950:web:cdc3edc155c72f3f7bb9af",
+  measurementId: "G-S89CKSDZK8"
+};
+/* ============================================================ */
+
+const fbApp = initializeApp(firebaseConfig);
+const fbAuth = getAuth(fbApp);
+const fbDb = getFirestore(fbApp);
+const DOC_REF = doc(fbDb, "rotasyon", "state");
+
+/* ============================================================
+   ROTASYON TERCİH SİSTEMİ
+   Firestore tabanlı — tüm cihazlar gerçek zamanlı senkron
+   ============================================================ */
+
+const DEFAULT_NAMES = ['ESM','KK','EK','ED','MA','GH','GA','GD','SM','ŞT','AH','SY','PB','OC','BK','MÇ','SÇ','İK','GÇ','BCO','BGB'];
+const EMPTY_SLOT_COUNT = 20;
+const MONTHS_TR = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+const DAYS_TR_SHORT = ['Pt','Sa','Ça','Pe','Cu','Ct','Pz'];
+
+function buildDefaultResidents() {
+  const list = [];
+  DEFAULT_NAMES.forEach((n, i) => {
+    list.push({ id: 'r' + (i + 1), name: n, password: '1234', submitted: false, dates: [] });
+  });
+  for (let i = 0; i < EMPTY_SLOT_COUNT; i++) {
+    list.push({ id: 'r' + (DEFAULT_NAMES.length + i + 1), name: '', password: '1234', submitted: false, dates: [] });
+  }
+  return list;
+}
+
+const DEFAULT_DATA = {
+  config: {
+    startYear: 0,    // örn. 2026
+    startMonth: 0,   // 1-12
+  },
+  residents: buildDefaultResidents(),
+  admin: { password: 'admin123' }
+};
+
+async function saveData() {
+  try {
+    await setDoc(DOC_REF, state.data);
+  } catch (e) {
+    console.error('Firestore yazma hatası:', e);
+    alert('Kayıt başarısız: ' + e.message + '\n\nİnternet bağlantınızı veya Firebase config\'inizi kontrol edin.');
+  }
+}
+
+const state = {
+  view: 'login',
+  currentUser: null,
+  adminTab: 'window',
+  data: structuredClone(DEFAULT_DATA),
+  loginError: '',
+  flash: '',
+  fbStatus: 'loading',
+  fbError: '',
+};
+
+/* ============================================================
+   Date utilities
+   ============================================================ */
+function daysInMonth(year, month) {
+  return new Date(year, month, 0).getDate();
+}
+function firstDayMon0(year, month) {
+  // Pazartesi=0, Pazar=6
+  const js = new Date(year, month - 1, 1).getDay();
+  return (js + 6) % 7;
+}
+function ymd(year, month, day) {
+  return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+}
+function parseYmd(iso) {
+  const [y, m, d] = iso.split('-').map(Number);
+  return { year: y, month: m, day: d };
+}
+function getMonths() {
+  const { startYear, startMonth } = state.data.config;
+  if (!startYear || !startMonth) return [];
+  const months = [];
+  let m = startMonth, y = startYear;
+  for (let i = 0; i < 3; i++) {
+    months.push({ year: y, month: m });
+    m += 1;
+    if (m > 12) { m = 1; y += 1; }
+  }
+  return months;
+}
+function isWeekend(year, month, day) {
+  const js = new Date(year, month - 1, day).getDay();
+  return js === 0 || js === 6;
+}
+function isoInWindow(iso) {
+  const months = getMonths();
+  if (months.length === 0) return false;
+  const { year, month } = parseYmd(iso);
+  return months.some(m => m.year === year && m.month === month);
+}
+
+// Range formatting: [5,6,7,9,14,15] -> "5-7, 9, 14-15"
+function formatRanges(days) {
+  if (days.length === 0) return '';
+  const sorted = days.slice().sort((a, b) => a - b);
+  const ranges = [];
+  let start = sorted[0], end = sorted[0];
+  for (let i = 1; i < sorted.length; i++) {
+    if (sorted[i] === end + 1) end = sorted[i];
+    else { ranges.push(start === end ? `${start}` : `${start}–${end}`); start = end = sorted[i]; }
+  }
+  ranges.push(start === end ? `${start}` : `${start}–${end}`);
+  return ranges.join(', ');
+}
+
+// Group ISO dates by month: returns array of { year, month, days: [d1, d2, ...] }
+function groupDatesByMonth(dates) {
+  const byMonth = {};
+  dates.forEach(iso => {
+    const { year, month, day } = parseYmd(iso);
+    const key = `${year}-${month}`;
+    if (!byMonth[key]) byMonth[key] = { year, month, days: [] };
+    byMonth[key].days.push(day);
+  });
+  return Object.values(byMonth).sort((a, b) => {
+    if (a.year !== b.year) return a.year - b.year;
+    return a.month - b.month;
+  });
+}
+
+/* ---------- Utility ---------- */
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+}
+function newId() { return 'r' + Math.random().toString(36).slice(2, 8); }
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+function render() {
+  const app = document.getElementById('app');
+  if (state.fbStatus === 'loading') { app.innerHTML = renderLoading(); return; }
+  if (state.fbStatus === 'error')   { app.innerHTML = renderError(); return; }
+  if (state.view === 'login') app.innerHTML = renderLogin();
+  else if (state.view === 'resident') app.innerHTML = renderResident();
+  else if (state.view === 'admin') app.innerHTML = renderAdmin();
+  bindEvents();
+  state.flash = '';
+}
+
+function renderLoading() {
+  return `
+    <div class="header-bar">
+      <div>
+        <h1>Rotasyon Tercih Sistemi</h1>
+        <div class="subtitle">Bağlanıyor...</div>
+      </div>
+    </div>
+    <div class="alert alert-info">
+      <span class="spinner"></span> Firebase'e bağlanılıyor, lütfen bekleyin...
+    </div>
+  `;
+}
+
+function renderError() {
+  return `
+    <div class="header-bar">
+      <div>
+        <h1>Bağlantı Hatası</h1>
+        <div class="subtitle">Firebase'e ulaşılamadı</div>
+      </div>
+    </div>
+    <div class="alert alert-danger">
+      <b>Hata:</b> ${escapeHtml(state.fbError)}
+    </div>
+    <p class="muted mb-2">Olası nedenler:</p>
+    <ul style="padding-left: 22px; color: var(--ink-soft); line-height: 1.8;">
+      <li>HTML içindeki <code>firebaseConfig</code> yanlış veya eksik doldurulmuş</li>
+      <li>Security Rules <code>/rotasyon/</code> koleksiyonu için izin vermiyor — Firebase Console'a gidip rule eklemeniz lazım</li>
+      <li>Anonymous Authentication aktifleştirilmemiş</li>
+      <li>İnternet bağlantısı yok</li>
+    </ul>
+    <button class="btn mt-3" onclick="location.reload()">Tekrar dene</button>
+  `;
+}
+
+/* ---------- LOGIN ---------- */
+function renderLogin() {
+  const named = state.data.residents.filter(r => r.name && r.name.trim());
+  const options = named.map(r =>
+    `<option value="${r.id}">${escapeHtml(r.name)}</option>`
+  ).join('');
+  return `
+    <div class="header-bar">
+      <div>
+        <h1>Rotasyon Tercih Sistemi</h1>
+        <div class="subtitle">Nöroloji asistanları</div>
+      </div>
+      <span class="sync-chip">Senkron · Çevrimiçi</span>
+    </div>
+
+    <p class="mb-2">Rotasyon takvimini görüntülemek ve tercih girmek için giriş yapın.</p>
+
+    ${state.loginError ? `<div class="alert alert-danger">${escapeHtml(state.loginError)}</div>` : ''}
+
+    <div class="form-group">
+      <label for="loginUser">Kullanıcı</label>
+      <select id="loginUser">
+        <option value="">— Seçin —</option>
+        <optgroup label="Asistanlar">${options}</optgroup>
+        <optgroup label="Yönetici">
+          <option value="__admin__">Site Yöneticisi</option>
+        </optgroup>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="loginPass">Şifre</label>
+      <input type="password" id="loginPass" autocomplete="current-password" placeholder="••••">
+    </div>
+
+    <button class="btn" id="loginBtn">Giriş Yap</button>
+
+    <div class="cred-hint">
+      <b>Varsayılan giriş bilgileri:</b><br>
+      Asistanlar — şifre: <code>1234</code><br>
+      Yönetici — şifre: <code>admin123</code>
+    </div>
+  `;
+}
+
+/* ---------- RESIDENT VIEW ---------- */
+function renderResident() {
+  const r = state.currentUser;
+  const months = getMonths();
+  const configured = months.length > 0;
+  const locked = r.submitted || !configured;
+
+  let statusAlert = '';
+  if (!configured) {
+    statusAlert = `<div class="alert alert-warning">Yönetici henüz rotasyon dönemini belirlemedi.</div>`;
+  } else if (r.submitted) {
+    statusAlert = `<div class="alert alert-success">Tercihleriniz <b>kaydedildi</b>. Değiştirmek için yöneticinizin onay kutusunu kaldırmasını isteyin.</div>`;
+  } else {
+    statusAlert = `<div class="alert alert-info">Rotasyon takviminde rotasyonda olduğunuz günleri tıklayarak seçin. Tamamlayınca <b>Kaydet ve Gönder</b>'e basın.</div>`;
+  }
+
+  const monthsHtml = months.map(m =>
+    renderMonth(m.year, m.month, r.dates, locked)
+  ).join('');
+
+  // Range picker bounds
+  const firstMonth = months[0];
+  const lastMonth = months[2];
+  const minIso = firstMonth ? ymd(firstMonth.year, firstMonth.month, 1) : '';
+  const maxIso = lastMonth ? ymd(lastMonth.year, lastMonth.month, daysInMonth(lastMonth.year, lastMonth.month)) : '';
+
+  return `
+    <div class="header-bar">
+      <div>
+        <h1>Rotasyon Takvimi</h1>
+        <div class="subtitle">Asistan paneli</div>
+      </div>
+      <div class="row">
+        <span class="user-chip"><span class="dot"></span>${escapeHtml(r.name)}</span>
+        <button class="btn btn-ghost btn-sm" id="logoutBtn">Çıkış</button>
+      </div>
+    </div>
+
+    ${statusAlert}
+
+    ${configured ? `
+      <div class="calendar-info">
+        <span>Seçili gün sayısı: <b>${r.dates.length}</b></span>
+        ${locked ? '<span style="color: var(--coral);">🔒 Kilitli</span>' : '<span style="color: var(--green);">● Düzenleniyor</span>'}
+      </div>
+
+      <div class="months-container" id="calendar">
+        ${monthsHtml}
+      </div>
+
+      ${!locked ? `
+        <div class="range-row">
+          <div class="range-inputs">
+            <div style="flex:1; min-width:140px;">
+              <label>Aralık başı</label>
+              <input type="date" id="rangeFrom" min="${minIso}" max="${maxIso}">
+            </div>
+            <div style="flex:1; min-width:140px;">
+              <label>Aralık sonu</label>
+              <input type="date" id="rangeTo" min="${minIso}" max="${maxIso}">
+            </div>
+            <button class="btn btn-sm" id="rangeAddBtn">Aralık ekle</button>
+          </div>
+          <button class="btn btn-secondary btn-sm" id="clearOwnBtn">Tümünü temizle</button>
+        </div>
+
+        <div class="mt-4 row-between">
+          <p class="muted">Kaydettiğinizde değişiklik yapamazsınız.</p>
+          <button class="btn" id="submitBtn">Kaydet ve Gönder</button>
+        </div>
+      ` : ''}
+    ` : ''}
+  `;
+}
+
+function renderMonth(year, month, selectedDates, locked) {
+  const days = daysInMonth(year, month);
+  const first = firstDayMon0(year, month);
+  const headers = DAYS_TR_SHORT.map(d => `<div class="day-header">${d}</div>`).join('');
+  let cells = '';
+  for (let i = 0; i < first; i++) cells += '<div class="day-cell empty"></div>';
+  for (let d = 1; d <= days; d++) {
+    const iso = ymd(year, month, d);
+    const sel = selectedDates.includes(iso);
+    const cls = ['day-cell'];
+    if (sel) cls.push('selected');
+    if (locked) cls.push('locked');
+    if (isWeekend(year, month, d)) cls.push('weekend');
+    cells += `<div class="${cls.join(' ')}" data-iso="${iso}">${d}</div>`;
+  }
+  return `
+    <div class="month-block">
+      <div class="month-title">${MONTHS_TR[month - 1]} ${year}</div>
+      <div class="month-grid">${headers}${cells}</div>
+    </div>
+  `;
+}
+
+/* ---------- ADMIN VIEW ---------- */
+function renderAdmin() {
+  return `
+    <div class="header-bar">
+      <div>
+        <h1>Yönetici Paneli</h1>
+        <div class="subtitle">Rotasyon tercih sistemi</div>
+      </div>
+      <div class="row">
+        <span class="user-chip"><span class="dot"></span>Yönetici</span>
+        <button class="btn btn-ghost btn-sm" id="logoutBtn">Çıkış</button>
+      </div>
+    </div>
+
+    ${state.flash ? `<div class="alert alert-success">${escapeHtml(state.flash)}</div>` : ''}
+
+    <div class="tab-bar">
+      <button class="tab ${state.adminTab === 'window' ? 'active' : ''}" data-tab="window">Rotasyon dönemi</button>
+      <button class="tab ${state.adminTab === 'submissions' ? 'active' : ''}" data-tab="submissions">Asistanlar</button>
+      <button class="tab ${state.adminTab === 'summary' ? 'active' : ''}" data-tab="summary">Asistan rotasyon süreleri</button>
+      <button class="tab ${state.adminTab === 'residents' ? 'active' : ''}" data-tab="residents">Asistan listesi</button>
+    </div>
+
+    ${state.adminTab === 'window' ? renderAdminWindow() : ''}
+    ${state.adminTab === 'submissions' ? renderAdminSubmissions() : ''}
+    ${state.adminTab === 'summary' ? renderAdminSummary() : ''}
+    ${state.adminTab === 'residents' ? renderAdminResidents() : ''}
+  `;
+}
+
+function renderAdminWindow() {
+  const { startYear, startMonth } = state.data.config;
+  const now = new Date();
+  const defaultYear = startYear || now.getFullYear();
+  const defaultMonth = startMonth || (now.getMonth() + 1);
+
+  const months = getMonths();
+  const configured = months.length > 0;
+
+  const monthOptions = MONTHS_TR.map((n, i) =>
+    `<option value="${i + 1}" ${defaultMonth === (i + 1) ? 'selected' : ''}>${n}</option>`
+  ).join('');
+
+  // Year options: current year - 1 to current year + 3
+  const baseYear = now.getFullYear();
+  const yearOptions = [];
+  for (let y = baseYear - 1; y <= baseYear + 3; y++) {
+    yearOptions.push(`<option value="${y}" ${defaultYear === y ? 'selected' : ''}>${y}</option>`);
+  }
+
+  return `
+    <h2>Rotasyon dönemini belirle</h2>
+    <p class="muted mb-2">İlk ayı seçtiğinizde diğer 2 ay otomatik olarak belirlenir. Şubat veya kısa aylar otomatik olarak doğru gün sayısıyla görünür.</p>
+
+    <div class="row">
+      <div class="form-group" style="flex:1; min-width: 180px;">
+        <label for="startMonthInput">Başlangıç ayı</label>
+        <select id="startMonthInput">${monthOptions}</select>
+      </div>
+      <div class="form-group" style="flex:1; min-width: 140px;">
+        <label for="startYearInput">Yıl</label>
+        <select id="startYearInput">${yearOptions}</select>
+      </div>
+    </div>
+
+    <div class="row mb-2">
+      <button class="btn" id="saveWindowBtn">Kaydet</button>
+    </div>
+
+    <div class="divider"></div>
+
+    <h3>Mevcut durum</h3>
+    <div class="alert ${configured ? 'alert-success' : 'alert-warning'}">
+      ${configured
+        ? `<b>Rotasyon dönemi:</b> ${months.map(m => `${MONTHS_TR[m.month-1]} ${m.year}`).join(' → ')}`
+        : 'Henüz rotasyon dönemi belirlenmemiş. Yukarıdan ay/yıl seçin.'}
+    </div>
+
+    <div class="divider"></div>
+
+    <h3>Yeni dönem için sıfırla</h3>
+    <p class="muted mb-2">Tüm asistanların seçimlerini ve onaylarını sıfırlar. Asistan listesi ve şifreler korunur.</p>
+    <button class="btn btn-danger" id="clearBtn">🗑 Tüm verileri temizle</button>
+  `;
+}
+
+function renderAdminSubmissions() {
+  const residents = state.data.residents.filter(r => r.name && r.name.trim());
+  const rows = residents.map(r => `
+    <div class="resident-row">
+      <span class="name">${escapeHtml(r.name)}</span>
+      <span class="meta">${r.dates.length > 0
+        ? `<b>${r.dates.length}</b> gün seçildi`
+        : '<span style="color: var(--ink-muted)">— henüz veri girilmedi —</span>'}</span>
+      <label class="checkbox-wrap" title="Onayı kaldırırsanız asistan tekrar düzenleyebilir">
+        <input type="checkbox" data-resid="${r.id}" ${r.submitted ? 'checked' : ''} class="submit-toggle">
+        ${r.submitted ? 'Onaylandı' : 'Bekleniyor'}
+      </label>
+    </div>
+  `).join('');
+
+  return `
+    <h2>Asistan gönderimleri</h2>
+    <p class="muted mb-2">Onay kutusunu kaldırırsanız ilgili asistan tercihlerini tekrar düzenleyebilir.</p>
+    <div class="resident-list">${rows || '<div class="resident-row">Henüz asistan eklenmemiş.</div>'}</div>
+  `;
+}
+
+function renderAdminSummary() {
+  const residents = state.data.residents.filter(r => r.name && r.name.trim());
+
+  const plainLines = [];
+  const html = residents.map(r => {
+    if (r.dates.length === 0) {
+      plainLines.push(`${r.name}: —`);
+      return `
+        <div class="summary-resident">
+          <div class="res-name">${escapeHtml(r.name)}</div>
+          <div class="res-line"><span class="empty-tok">— seçim yok —</span></div>
+        </div>
+      `;
+    }
+    const grouped = groupDatesByMonth(r.dates);
+    const dayLines = grouped.map(g => {
+      const sorted = g.days.slice().sort((a, b) => a - b);
+      return `${MONTHS_TR[g.month - 1]} ${g.year}: ${sorted.join(', ')}`;
+    });
+    const rangeLines = grouped.map(g => {
+      const sorted = g.days.slice().sort((a, b) => a - b);
+      return `${MONTHS_TR[g.month - 1]} ${g.year}: ${formatRanges(sorted)}`;
+    });
+
+    plainLines.push(`${r.name}:`);
+    plainLines.push(`  Gün gün: ${dayLines.join(' / ')}`);
+    plainLines.push(`  Aralık:  ${rangeLines.join(' / ')}`);
+
+    return `
+      <div class="summary-resident">
+        <div class="res-name">${escapeHtml(r.name)}</div>
+        <div class="res-line"><span class="res-label">Gün gün</span>${escapeHtml(dayLines.join(' / '))}</div>
+        <div class="res-line"><span class="res-label">Aralık</span>${escapeHtml(rangeLines.join(' / '))}</div>
+      </div>
+    `;
+  }).join('');
+
+  const plainText = plainLines.join('\n');
+
+  return `
+    <h2>Asistan rotasyon süreleri</h2>
+    <p class="muted mb-2">Her asistan için hem gün gün hem de aralık olarak rotasyon dönemleri.</p>
+    <div class="row mb-2">
+      <button class="btn btn-sm" id="copyBtn">📋 Düz metin kopyala</button>
+    </div>
+    <div class="summary-box">${html || '<span class="empty-tok">— asistan yok —</span>'}</div>
+    <textarea id="plainSummary" style="position:absolute;left:-9999px;" readonly>${escapeHtml(plainText)}</textarea>
+  `;
+}
+
+function renderAdminResidents() {
+  const all = state.data.residents;
+  const filledCount = all.filter(r => r.name && r.name.trim()).length;
+  const rows = all.map((r, idx) => `
+    <div class="slot-row">
+      <span class="slot-num">${idx + 1}</span>
+      <input type="text" class="slot-name" data-resid="${r.id}" value="${escapeHtml(r.name)}" placeholder="(boş slot)">
+      <input type="text" class="slot-pass" data-resid="${r.id}" value="${escapeHtml(r.password)}" placeholder="şifre">
+      <span class="slot-meta">${r.dates.length > 0 ? `<b>${r.dates.length}</b> gün${r.submitted ? ' · ✓' : ''}` : ''}</span>
+      <button class="btn btn-ghost btn-sm clear-slot-btn" data-resid="${r.id}" title="Bu slotu boşalt">✕</button>
+    </div>
+  `).join('');
+
+  return `
+    <h2>Asistan listesi</h2>
+    <p class="muted mb-2">Toplam <b>${all.length}</b> slot · <b>${filledCount}</b> dolu · <b>${all.length - filledCount}</b> boş. İsim ve şifreler değiştirildiğinde otomatik kaydedilir.</p>
+
+    <div class="slot-list-header">
+      <span></span>
+      <span>İsim</span>
+      <span>Şifre</span>
+      <span>Veri</span>
+      <span></span>
+    </div>
+    <div class="slot-list mb-2">${rows}</div>
+
+    <div class="row mb-2">
+      <button class="btn btn-secondary btn-sm" id="addSlotsBtn">+ 5 boş slot ekle</button>
+    </div>
+
+    <div class="divider"></div>
+
+    <h3>Yönetici şifresini değiştir</h3>
+    <div class="row">
+      <div class="form-group" style="flex:1; min-width:200px; margin-bottom:0;">
+        <input type="password" id="newAdminPass" placeholder="Yeni yönetici şifresi">
+      </div>
+      <button class="btn btn-secondary" id="changeAdminPassBtn">Değiştir</button>
+    </div>
+  `;
+}
+
+/* ============================================================
+   EVENTS
+   ============================================================ */
+function bindEvents() {
+  // Login
+  const loginBtn = document.getElementById('loginBtn');
+  if (loginBtn) {
+    loginBtn.addEventListener('click', handleLogin);
+    document.getElementById('loginPass').addEventListener('keydown', e => {
+      if (e.key === 'Enter') handleLogin();
+    });
+  }
+
+  // Logout
+  const logoutBtn = document.getElementById('logoutBtn');
+  if (logoutBtn) logoutBtn.addEventListener('click', () => {
+    state.currentUser = null;
+    state.view = 'login';
+    state.loginError = '';
+    render();
+  });
+
+  // Resident calendar
+  document.querySelectorAll('#calendar .day-cell[data-iso]').forEach(cell => {
+    cell.addEventListener('click', () => {
+      const r = state.currentUser;
+      if (r.submitted) return;
+      const iso = cell.dataset.iso;
+      const idx = r.dates.indexOf(iso);
+      if (idx >= 0) r.dates.splice(idx, 1);
+      else r.dates.push(iso);
+      saveData();
+      render();
+    });
+  });
+
+  // Range add (date inputs)
+  const rangeAddBtn = document.getElementById('rangeAddBtn');
+  if (rangeAddBtn) rangeAddBtn.addEventListener('click', () => {
+    const r = state.currentUser;
+    const fromIso = document.getElementById('rangeFrom').value;
+    const toIso = document.getElementById('rangeTo').value;
+    if (!fromIso || !toIso) { alert('Başlangıç ve bitiş tarihlerini seçin.'); return; }
+    if (fromIso > toIso) { alert('Bitiş tarihi başlangıçtan önce olamaz.'); return; }
+
+    // Iterate days
+    const start = new Date(fromIso + 'T00:00:00');
+    const end = new Date(toIso + 'T00:00:00');
+    let added = 0, skipped = 0;
+    for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+      const iso = ymd(d.getFullYear(), d.getMonth() + 1, d.getDate());
+      if (!isoInWindow(iso)) { skipped++; continue; }
+      if (!r.dates.includes(iso)) { r.dates.push(iso); added++; }
+    }
+    saveData();
+    if (skipped > 0) {
+      state.flash = `${added} gün eklendi (${skipped} gün rotasyon penceresi dışında olduğu için atlandı).`;
+    }
+    render();
+  });
+
+  // Clear own selections
+  const clearOwnBtn = document.getElementById('clearOwnBtn');
+  if (clearOwnBtn) clearOwnBtn.addEventListener('click', () => {
+    if (!confirm('Tüm seçimlerinizi silmek istediğinize emin misiniz?')) return;
+    state.currentUser.dates = [];
+    saveData();
+    render();
+  });
+
+  // Submit
+  const submitBtn = document.getElementById('submitBtn');
+  if (submitBtn) submitBtn.addEventListener('click', () => {
+    const r = state.currentUser;
+    if (r.dates.length === 0) {
+      if (!confirm('Hiç gün seçmediniz. Yine de "hiç rotasyon yok" olarak kaydedilsin mi?')) return;
+    } else {
+      if (!confirm(`${r.dates.length} gün seçtiniz. Kaydedilsin mi? Sonra değiştiremezsiniz.`)) return;
+    }
+    r.submitted = true;
+    saveData();
+    render();
+  });
+
+  // Admin tabs
+  document.querySelectorAll('.tab[data-tab]').forEach(t => {
+    t.addEventListener('click', () => {
+      state.adminTab = t.dataset.tab;
+      render();
+    });
+  });
+
+  // Admin: window settings
+  const saveWindowBtn = document.getElementById('saveWindowBtn');
+  if (saveWindowBtn) saveWindowBtn.addEventListener('click', () => {
+    const m = parseInt(document.getElementById('startMonthInput').value, 10);
+    const y = parseInt(document.getElementById('startYearInput').value, 10);
+    if (isNaN(m) || isNaN(y)) { alert('Ay ve yıl seçin.'); return; }
+    state.data.config.startMonth = m;
+    state.data.config.startYear = y;
+    saveData();
+    state.flash = 'Rotasyon dönemi güncellendi.';
+    render();
+  });
+
+  // Admin: clear all
+  const clearBtn = document.getElementById('clearBtn');
+  if (clearBtn) clearBtn.addEventListener('click', () => {
+    if (!confirm('TÜM tercihler ve onaylar silinecek. Asistan listesi ve şifreler korunur. Devam edilsin mi?')) return;
+    state.data.residents.forEach(r => { r.dates = []; r.submitted = false; });
+    state.data.config.startYear = 0;
+    state.data.config.startMonth = 0;
+    saveData();
+    state.flash = 'Veriler temizlendi. Yeni dönem için ay/yıl seçebilirsiniz.';
+    render();
+  });
+
+  // Admin: toggle submission
+  document.querySelectorAll('.submit-toggle').forEach(cb => {
+    cb.addEventListener('change', () => {
+      const r = state.data.residents.find(x => x.id === cb.dataset.resid);
+      if (r) { r.submitted = cb.checked; saveData(); }
+    });
+  });
+
+  // Admin: copy summary
+  const copyBtn = document.getElementById('copyBtn');
+  if (copyBtn) copyBtn.addEventListener('click', () => {
+    const ta = document.getElementById('plainSummary');
+    ta.select();
+    try {
+      document.execCommand('copy');
+      copyBtn.textContent = '✓ Kopyalandı';
+      setTimeout(() => { copyBtn.textContent = '📋 Düz metin kopyala'; }, 1500);
+    } catch (e) { alert('Kopyalanamadı.'); }
+  });
+
+  // Admin: residents management — inline editing
+  document.querySelectorAll('.slot-name').forEach(inp => {
+    inp.addEventListener('change', () => {
+      const r = state.data.residents.find(x => x.id === inp.dataset.resid);
+      if (!r) return;
+      const newName = inp.value.trim();
+      if (newName && state.data.residents.some(x => x.id !== r.id && x.name.trim().toLowerCase() === newName.toLowerCase())) {
+        alert('Bu isim başka bir slotta zaten var.');
+        inp.value = r.name;
+        return;
+      }
+      r.name = newName;
+      saveData();
+    });
+  });
+
+  document.querySelectorAll('.slot-pass').forEach(inp => {
+    inp.addEventListener('change', () => {
+      const r = state.data.residents.find(x => x.id === inp.dataset.resid);
+      if (!r) return;
+      r.password = inp.value.trim() || '1234';
+      if (!inp.value.trim()) inp.value = '1234';
+      saveData();
+    });
+  });
+
+  document.querySelectorAll('.clear-slot-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const r = state.data.residents.find(x => x.id === btn.dataset.resid);
+      if (!r) return;
+      const label = r.name || '(boş slot)';
+      if (!confirm(`${label} slotu boşaltılacak (isim, şifre, tarihler sıfırlanır). Devam?`)) return;
+      r.name = '';
+      r.password = '1234';
+      r.submitted = false;
+      r.dates = [];
+      saveData();
+      state.flash = 'Slot boşaltıldı.';
+      render();
+    });
+  });
+
+  const addSlotsBtn = document.getElementById('addSlotsBtn');
+  if (addSlotsBtn) addSlotsBtn.addEventListener('click', () => {
+    for (let i = 0; i < 5; i++) {
+      state.data.residents.push({ id: newId(), name: '', password: '1234', submitted: false, dates: [] });
+    }
+    saveData();
+    state.flash = '5 boş slot eklendi.';
+    render();
+  });
+
+  // Admin: change admin password
+  const changeAdminPassBtn = document.getElementById('changeAdminPassBtn');
+  if (changeAdminPassBtn) changeAdminPassBtn.addEventListener('click', () => {
+    const np = document.getElementById('newAdminPass').value.trim();
+    if (!np) { alert('Şifre girin.'); return; }
+    state.data.admin.password = np;
+    saveData();
+    state.flash = 'Yönetici şifresi güncellendi.';
+    render();
+  });
+}
+
+function handleLogin() {
+  const userVal = document.getElementById('loginUser').value;
+  const pass = document.getElementById('loginPass').value;
+  if (!userVal) { state.loginError = 'Kullanıcı seçin.'; render(); return; }
+  if (userVal === '__admin__') {
+    if (pass === state.data.admin.password) {
+      state.currentUser = 'admin';
+      state.view = 'admin';
+      state.loginError = '';
+      render();
+    } else {
+      state.loginError = 'Yönetici şifresi yanlış.';
+      render();
+    }
+    return;
+  }
+  const r = state.data.residents.find(x => x.id === userVal);
+  if (r && r.password === pass) {
+    state.currentUser = r;
+    state.view = 'resident';
+    state.loginError = '';
+    render();
+  } else {
+    state.loginError = 'Şifre yanlış.';
+    render();
+  }
+}
+
+/* ============================================================
+   INIT — Firebase'e bağlan, dinleyiciyi başlat
+   ============================================================ */
+async function start() {
+  render();
+  try {
+    await signInAnonymously(fbAuth);
+
+    let firstSnapshot = true;
+    onSnapshot(DOC_REF, async (snap) => {
+      if (snap.exists()) {
+        const data = snap.data();
+        if (!data.config) data.config = { startYear: 0, startMonth: 0 };
+        if (!data.residents) data.residents = buildDefaultResidents();
+        if (!data.admin) data.admin = { password: 'admin123' };
+        state.data = data;
+      } else if (firstSnapshot) {
+        state.data = structuredClone(DEFAULT_DATA);
+        try {
+          await setDoc(DOC_REF, state.data);
+        } catch (e) {
+          console.error('İlk veri yazımı başarısız:', e);
+        }
+      }
+      state.fbStatus = 'ready';
+      firstSnapshot = false;
+
+      if (state.currentUser && state.currentUser !== 'admin') {
+        const fresh = state.data.residents.find(r => r.id === state.currentUser.id);
+        if (fresh) state.currentUser = fresh;
+        else { state.currentUser = null; state.view = 'login'; }
+      }
+
+      render();
+    }, (err) => {
+      console.error('Firestore okuma hatası:', err);
+      state.fbStatus = 'error';
+      state.fbError = err.message || String(err);
+      render();
+    });
+  } catch (e) {
+    console.error('Firebase başlatılamadı:', e);
+    state.fbStatus = 'error';
+    state.fbError = e.message || String(e);
+    render();
+  }
+}
+
+start();
+</script>
+</body>
+</html>
